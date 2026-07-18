@@ -28,7 +28,7 @@ const ROOMS = {
       { id: 'door', label: '门', x: 90, y: 42, w: 7, h: 24, travel: true, note: '门后通向小屋里的其他房间。' },
       { id: 'table', label: '餐桌', x: 42, y: 58, w: 26, h: 14, action: 'feed', petX: 52, petY: 51 },
       { id: 'stove', label: '灶台', x: 76, y: 49, w: 17, h: 20, note: '灶台旁留着一点温暖的香气。' },
-      { id: 'dish', label: '餐盘', x: 52, y: 52, w: 8, h: 6, action: 'feed', petX: 52, petY: 50 },
+      { id: 'dish', label: '餐盘', x: 52, y: 52, w: 8, h: 6, action: 'feed', petX: 52, petY: 50, note: '餐盘里放着黑麦面包和一小碗热汤。' },
     ],
   },
   bedroom: {
@@ -66,7 +66,7 @@ const ACTIONS = {
   feed: {
     animation: 'is-eating',
     duration: 1800,
-    narration: '{name}认真吃完了一小份饭。',
+    narration: '{name}慢慢吃完黑麦面包和热汤。',
     deltas: { satiety: 28, cleanliness: -3, energy: 2, mood: 6, bond: 2 },
   },
   bath: {
@@ -94,8 +94,11 @@ const DEFAULT_SAVE = {
   pets: [
     {
       id: 'pet-countryhuman-placeholder',
-      name: '小小住民',
+      name: '魏玛',
       kind: 'countryhuman',
+      country: '魏玛共和国',
+      nationality: '德国',
+      heightClass: 'small',
       stats: {
         satiety: 76,
         cleanliness: 82,
@@ -109,14 +112,15 @@ const DEFAULT_SAVE = {
       lastAction: null,
       actionHistory: [],
       personality: {
-        keywords: ['安静', '温和', '占位'],
-        expressionStyle: '用动作和状态表达，不直接说话',
+        keywords: ['阴郁', '颓废', '敏感', '文静'],
+        expressionStyle: '用轻微低头、慢动作和疲惫表情表达，不直接说话',
       },
       likes: {
-        rooms: ['客厅'],
-        interactions: ['play'],
+        rooms: ['客厅', '卧室'],
+        interactions: ['sleep', 'feed'],
+        foods: ['黑麦面包', '热汤'],
       },
-      visualAnchor: '国家拟人角色占位；最终国家、配色和符号待确认',
+      visualAnchor: '魏玛共和国；德国人；黑色半长卷发、灰蓝色眼睛、眼镜、苍白肤色、长衬衫、光腿、小个子',
     },
   ],
   activePetId: 'pet-countryhuman-placeholder',
@@ -220,6 +224,9 @@ function sanitizeSave(candidate) {
       id,
       name: typeof pet?.name === 'string' && pet.name ? pet.name : fallbackPet.name,
       kind: typeof pet?.kind === 'string' && pet.kind ? pet.kind : fallbackPet.kind,
+      country: typeof pet?.country === 'string' && pet.country ? pet.country : fallbackPet.country,
+      nationality: typeof pet?.nationality === 'string' && pet.nationality ? pet.nationality : fallbackPet.nationality,
+      heightClass: typeof pet?.heightClass === 'string' && pet.heightClass ? pet.heightClass : fallbackPet.heightClass,
       currentRoom: Object.hasOwn(ROOMS, pet?.currentRoom) ? pet.currentRoom : currentRoomForCandidate(candidate),
       currentAction: isPlainObject(pet?.currentAction) ? pet.currentAction : null,
       actionState: typeof pet?.actionState === 'string' ? pet.actionState : 'idle',
@@ -384,7 +391,9 @@ function getStatusTone(key, value) {
 }
 
 function renderPetState() {
-  const stats = getActivePet().stats;
+  const activePet = getActivePet();
+  const stats = activePet.stats;
+  els.pet.setAttribute('aria-label', activePet.name);
   els.pet.dataset.hungry = stats.satiety < 35 ? 'true' : 'false';
   els.pet.dataset.dirty = stats.cleanliness < 35 ? 'true' : 'false';
   els.pet.dataset.tired = stats.energy < 35 ? 'true' : 'false';

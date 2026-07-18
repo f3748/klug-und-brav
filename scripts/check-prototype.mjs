@@ -5,9 +5,9 @@ const html = readFileSync('index.html', 'utf8');
 const js = readFileSync('src/main.js', 'utf8');
 const css = readFileSync('src/styles.css', 'utf8');
 
-const requiredHtml = ['id="status-bars"', 'id="mini-map"', 'id="map-overlay"', 'id="large-map"', 'id="room-scene"', 'id="narration"', 'prototype-note'];
-const requiredJs = ['localStorage', 'sanitizeSave', 'safeReadSave', 'safeWriteSave', 'getLocalDateKey', 'pets', 'actionHistory', 'personality', 'visualAnchor', 'renderPetState', 'renderActionState', 'movePetTo', 'derivePetMoodState', 'currentAction', 'lastVisitedAt', 'renderMiniMap', 'renderLargeMap', 'openMap', 'closeMap', 'switchRoom', 'aria-valuenow'];
-const requiredCss = ['.status-card', '.room-scene', '.furniture', '.pet', 'data-weather', '.prototype-note', 'data-hungry', 'data-action', 'data-mood-state', '.mini-map', '.mini-map-art', '.map-dot', '.map-overlay', '.large-map', '.map-room'];
+const requiredHtml = ['id="status-bars"', 'id="mini-map"', 'id="map-overlay"', 'id="large-map"', 'id="room-scene"', 'id="narration"', 'prototype-note', 'pet-weimar', 'pet-glasses'];
+const requiredJs = ['localStorage', 'sanitizeSave', 'safeReadSave', 'safeWriteSave', 'getLocalDateKey', 'pets', 'actionHistory', 'personality', 'visualAnchor', '魏玛', 'country', 'nationality', 'heightClass', 'renderPetState', 'renderActionState', 'movePetTo', 'derivePetMoodState', 'currentAction', 'lastVisitedAt', 'renderMiniMap', 'renderLargeMap', 'openMap', 'closeMap', 'switchRoom', 'aria-valuenow'];
+const requiredCss = ['.status-card', '.room-scene', '.furniture', '.pet', '.pet-weimar', '.pet-hair', '.pet-glasses', '.pet-legs', 'data-weather', '.prototype-note', 'data-hungry', 'data-action', 'data-mood-state', '.mini-map', '.mini-map-art', '.map-dot', '.map-overlay', '.large-map', '.map-room'];
 
 for (const [name, text, needles] of [
   ['index.html', html, requiredHtml],

@@ -1,6 +1,6 @@
 # klug-und-brav
 
-A virtual pet website about countryhuman.
+A virtual pet website about countryhumans (personified countries).
 
 ## Planning
 
