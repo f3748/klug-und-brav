@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Klug und Brav · Countryhuman 小屋</title>
+    <link rel="stylesheet" href="src/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell" aria-label="Countryhuman 电子小宠物原型">
+      <section class="room-scene" id="room-scene" aria-live="polite">
+        <div class="window-view" id="window-view" aria-hidden="true"></div>
+        <div class="weather-layer" id="weather-layer" aria-hidden="true"></div>
+        <div class="room-title" id="room-title"></div>
+        <div class="pet" id="pet" aria-label="国家拟人角色" role="img">
+          <div class="pet-head">
+            <span class="pet-eye left"></span>
+            <span class="pet-eye right"></span>
+          </div>
+          <div class="pet-body"></div>
+        </div>
+        <div class="interaction-note" id="interaction-note">点击房间里的家具来照顾角色。</div>
+      </section>
+
+      <section class="hud top-panel" aria-label="角色状态">
+        <div>
+          <p class="eyebrow">Klug und Brav</p>
+          <h1>Countryhuman 小屋</h1>
+        </div>
+        <div class="world-chip" id="world-chip">正在整理小屋...</div>
+      </section>
+
+      <section class="hud prototype-note" aria-label="原型说明">
+        当前是功能原型：角色、家具和房间都是占位表现，不代表最终美术。
+      </section>
+
+      <section class="hud status-card" aria-label="状态条" id="status-bars"></section>
+
+      <button class="hud mini-map" aria-label="打开地图" id="mini-map" type="button"></button>
+
+      <section class="map-overlay" id="map-overlay" aria-label="场景地图" aria-hidden="true">
+        <div class="map-panel">
+          <div class="map-panel-header">
+            <strong>小屋地图</strong>
+            <button class="map-close" id="map-close" type="button">关闭</button>
+          </div>
+          <div class="large-map" id="large-map"></div>
+        </div>
+      </section>
+
+      <section class="hud log-card" aria-label="安静旁白">
+        <p id="narration">小屋里很安静。</p>
+        <button class="reset-button" id="reset-save" type="button">重置本地存档</button>
+      </section>
+    </main>
+
+    <script defer src="src/main.js"></script>
+  </body>
+</html>
