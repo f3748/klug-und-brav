@@ -25,6 +25,7 @@ const ROOMS = {
     className: 'kitchen',
     furniture: [
       { id: 'fridge', label: '冰箱', x: 8, y: 33, w: 14, h: 36, action: 'feed', petX: 27, petY: 54 },
+      { id: 'door', label: '门', x: 90, y: 42, w: 7, h: 24, travel: true, note: '门后通向小屋里的其他房间。' },
       { id: 'table', label: '餐桌', x: 42, y: 58, w: 26, h: 14, action: 'feed', petX: 52, petY: 51 },
       { id: 'stove', label: '灶台', x: 76, y: 49, w: 17, h: 20, note: '灶台旁留着一点温暖的香气。' },
       { id: 'dish', label: '餐盘', x: 52, y: 52, w: 8, h: 6, action: 'feed', petX: 52, petY: 50 },
@@ -38,6 +39,7 @@ const ROOMS = {
       { id: 'lamp', label: '小灯', x: 52, y: 42, w: 8, h: 28, note: '小灯把卧室照得软软的。' },
       { id: 'wardrobe', label: '衣柜', x: 78, y: 35, w: 15, h: 35, note: '衣柜里以后可以放角色的衣服。' },
       { id: 'nightstand', label: '床头柜', x: 47, y: 58, w: 9, h: 12, note: '床头柜上放着一盏小小的灯影。' },
+      { id: 'door', label: '门', x: 90, y: 42, w: 7, h: 24, travel: true, note: '门后通向小屋里的其他房间。' },
     ],
   },
   bathroom: {
@@ -48,6 +50,7 @@ const ROOMS = {
       { id: 'sink', label: '洗手池', x: 56, y: 52, w: 15, h: 18, action: 'bath', petX: 52, petY: 51 },
       { id: 'mirror', label: '镜子', x: 58, y: 31, w: 11, h: 15, note: '镜子里映着安静的小屋。' },
       { id: 'towel', label: '毛巾', x: 78, y: 36, w: 9, h: 18, note: '柔软的毛巾挂在墙边。' },
+      { id: 'door', label: '门', x: 90, y: 42, w: 7, h: 24, travel: true, note: '门后通向小屋里的其他房间。' },
     ],
   },
 };
@@ -128,6 +131,9 @@ const state = loadSave();
 const els = {
   statusBars: document.querySelector('#status-bars'),
   miniMap: document.querySelector('#mini-map'),
+  mapOverlay: document.querySelector('#map-overlay'),
+  largeMap: document.querySelector('#large-map'),
+  mapClose: document.querySelector('#map-close'),
   roomScene: document.querySelector('#room-scene'),
   roomTitle: document.querySelector('#room-title'),
   pet: document.querySelector('#pet'),
@@ -143,6 +149,14 @@ applyOfflineDecay();
 render();
 markVisitedAndSave();
 window.setInterval(refreshWorldIfNeeded, 60000);
+
+els.miniMap.addEventListener('click', openMap);
+els.mapClose.addEventListener('click', closeMap);
+els.mapOverlay.addEventListener('click', (event) => {
+  if (event.target === els.mapOverlay) {
+    closeMap();
+  }
+});
 
 els.resetSave.addEventListener('click', () => {
   if (!window.confirm('要重置这个浏览器里的本地存档吗？')) {
@@ -419,19 +433,42 @@ function resetPetPosition() {
 
 function renderMiniMap() {
   els.miniMap.innerHTML = `
-    <strong class="mini-map-title">小地图</strong>
-    <div class="mini-map-grid">
+    <span class="mini-map-title">小地图</span>
+    <span class="mini-map-art" aria-hidden="true">
       ${Object.entries(ROOMS).map(([roomId, room]) => `
-        <button type="button" class="map-room ${roomId === state.currentRoom ? 'is-active' : ''}" data-room="${roomId}" ${roomId === state.currentRoom ? 'aria-current="page"' : ''}>
-          ${room.label}
-        </button>
+        <span class="map-dot ${roomId === state.currentRoom ? 'is-active' : ''}" data-room="${roomId}" title="${room.label}"></span>
       `).join('')}
-    </div>
+    </span>
   `;
 
-  els.miniMap.querySelectorAll('button').forEach((button) => {
-    button.addEventListener('click', () => switchRoom(button.dataset.room));
+  renderLargeMap();
+}
+
+function renderLargeMap() {
+  els.largeMap.innerHTML = Object.entries(ROOMS).map(([roomId, room]) => `
+    <button type="button" class="map-room ${roomId === state.currentRoom ? 'is-active' : ''}" data-room="${roomId}" ${roomId === state.currentRoom ? 'aria-current="page"' : ''}>
+      <span class="map-room-node" aria-hidden="true"></span>
+      <span>${room.label}</span>
+    </button>
+  `).join('');
+
+  els.largeMap.querySelectorAll('button').forEach((button) => {
+    button.addEventListener('click', () => {
+      switchRoom(button.dataset.room);
+      closeMap();
+    });
   });
+}
+
+function openMap() {
+  renderLargeMap();
+  els.mapOverlay.classList.add('is-open');
+  els.mapOverlay.setAttribute('aria-hidden', 'false');
+}
+
+function closeMap() {
+  els.mapOverlay.classList.remove('is-open');
+  els.mapOverlay.setAttribute('aria-hidden', 'true');
 }
 
 function switchRoom(roomId) {

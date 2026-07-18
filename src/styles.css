@@ -128,34 +128,118 @@ h1 {
 .mini-map {
   right: 24px;
   top: 20px;
-  width: 260px;
+  width: 180px;
+  min-height: 132px;
   padding: 12px;
   background: rgba(255, 248, 235, 0.92);
+  color: var(--ink);
+  cursor: pointer;
+  text-align: left;
 }
 
 .mini-map-title {
   display: block;
   margin-bottom: 8px;
   font-size: 0.88rem;
+  font-weight: 900;
 }
 
-.mini-map-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 6px;
+.mini-map-art {
+  position: relative;
+  display: block;
+  height: 74px;
+  border: 3px solid var(--ink);
+  background:
+    linear-gradient(90deg, transparent 0 48%, rgba(60,47,47,0.2) 48% 52%, transparent 52%),
+    linear-gradient(transparent 0 48%, rgba(60,47,47,0.2) 48% 52%, transparent 52%),
+    #f5d6a8;
 }
 
-.map-room {
-  padding: 8px 6px;
+.map-dot {
+  position: absolute;
+  width: 16px;
+  height: 16px;
   border: 3px solid var(--ink);
   background: #ffd18f;
-  color: var(--ink);
+}
+
+.map-dot[data-room="living"] { left: 18%; top: 18%; }
+.map-dot[data-room="kitchen"] { right: 18%; top: 18%; }
+.map-dot[data-room="bedroom"] { left: 18%; bottom: 18%; }
+.map-dot[data-room="bathroom"] { right: 18%; bottom: 18%; }
+.map-dot.is-active { background: #74b879; }
+
+.map-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  display: none;
+  place-items: center;
+  padding: 24px;
+  background: rgba(44, 34, 34, 0.36);
+}
+
+.map-overlay.is-open { display: grid; }
+
+.map-panel {
+  width: min(720px, calc(100vw - 48px));
+  border: var(--pixel) solid var(--ink);
+  background: rgba(255, 244, 223, 0.96);
+  box-shadow: 8px 8px 0 var(--shadow);
+}
+
+.map-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border-bottom: var(--pixel) solid var(--ink);
+}
+
+.map-close {
+  padding: 8px 10px;
+  border: 3px solid var(--ink);
+  background: #ffd18f;
   cursor: pointer;
   font-weight: 800;
 }
 
+.large-map {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(160px, 1fr));
+  gap: 28px;
+  padding: 34px;
+  background:
+    linear-gradient(90deg, transparent 0 49%, rgba(60,47,47,0.18) 49% 51%, transparent 51%),
+    linear-gradient(transparent 0 49%, rgba(60,47,47,0.18) 49% 51%, transparent 51%),
+    #f5d6a8;
+}
+
+.map-room {
+  display: grid;
+  place-items: center;
+  gap: 8px;
+  min-height: 116px;
+  padding: 14px;
+  border: 3px solid var(--ink);
+  background: #ffd18f;
+  color: var(--ink);
+  cursor: pointer;
+  font-weight: 900;
+}
+
+.map-room-node {
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--ink);
+  background: #fff8eb;
+}
+
 .map-room:hover,
 .map-room.is-active { background: #fff0c7; }
+.map-room.is-active .map-room-node { background: #74b879; }
 
 .room-scene {
   position: fixed;
@@ -432,7 +516,13 @@ h1 {
     left: 16px;
     right: auto;
     top: 232px;
-    width: 220px;
+    width: 180px;
+  }
+
+  .large-map {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 18px;
   }
 
   .status-card {
