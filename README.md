@@ -1,6 +1,6 @@
 # klug-und-brav
 
-A browser-first pixel virtual pet website about quiet, room-based life with a small character.
+A virtual pet website about countryhuman.
 
 ## Planning
 
