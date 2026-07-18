@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Klug und Brav</title>
+    <link rel="stylesheet" href="src/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell" aria-label="Countryhuman virtual pet prototype">
+      <section class="top-panel" aria-label="Pet status">
+        <div>
+          <p class="eyebrow">Klug und Brav</p>
+          <h1>Countryhuman Room Pet</h1>
+        </div>
+        <div class="world-chip" id="world-chip">Loading world...</div>
+      </section>
+
+      <section class="status-card" aria-label="Status bars" id="status-bars"></section>
+
+      <section class="game-card" aria-label="Room scene">
+        <nav class="room-tabs" aria-label="Rooms" id="room-tabs"></nav>
+        <section class="room-scene" id="room-scene" aria-live="polite">
+          <div class="window-view" id="window-view" aria-hidden="true"></div>
+          <div class="weather-layer" id="weather-layer" aria-hidden="true"></div>
+          <div class="room-title" id="room-title"></div>
+          <div class="pet" id="pet" aria-label="Small countryhuman pet" role="img">
+            <div class="pet-head">
+              <span class="pet-eye left"></span>
+              <span class="pet-eye right"></span>
+            </div>
+            <div class="pet-body"></div>
+          </div>
+          <div class="interaction-note" id="interaction-note">Click furniture to interact.</div>
+        </section>
+      </section>
+
+      <section class="log-card" aria-label="Quiet narrator">
+        <p id="narration">The little room is quiet.</p>
+        <button class="reset-button" id="reset-save" type="button">Reset local save</button>
+      </section>
+    </main>
+
+    <script defer src="src/main.js"></script>
+  </body>
+</html>
