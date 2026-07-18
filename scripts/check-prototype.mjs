@@ -5,9 +5,9 @@ const html = readFileSync('index.html', 'utf8');
 const js = readFileSync('src/main.js', 'utf8');
 const css = readFileSync('src/styles.css', 'utf8');
 
-const requiredHtml = ['id="status-bars"', 'id="room-tabs"', 'id="room-scene"', 'id="narration"'];
-const requiredJs = ['localStorage', 'sanitizeSave', 'safeReadSave', 'safeWriteSave', 'getLocalDateKey', 'pets', 'aria-valuenow'];
-const requiredCss = ['.status-card', '.room-scene', '.furniture', '.pet', 'data-weather'];
+const requiredHtml = ['id="status-bars"', 'id="room-tabs"', 'id="room-scene"', 'id="narration"', 'prototype-note'];
+const requiredJs = ['localStorage', 'sanitizeSave', 'safeReadSave', 'safeWriteSave', 'getLocalDateKey', 'pets', 'actionHistory', 'personality', 'visualAnchor', 'renderPetState', 'renderActionState', 'movePetTo', 'derivePetMoodState', 'currentAction', 'lastVisitedAt', 'aria-valuenow'];
+const requiredCss = ['.status-card', '.room-scene', '.furniture', '.pet', 'data-weather', '.prototype-note', 'data-hungry', 'data-action', 'data-mood-state'];
 
 for (const [name, text, needles] of [
   ['index.html', html, requiredHtml],
@@ -38,11 +38,13 @@ function runWithStorage(initialValue, label, options = {}) {
     localStorage: storage,
     window: {
       setTimeout: () => {},
+      setInterval: () => {},
       confirm: () => true,
     },
     Date,
     structuredClone,
     setTimeout: () => {},
+    setInterval: () => {},
   });
   context.window.window = context.window;
   context.window.document = document;

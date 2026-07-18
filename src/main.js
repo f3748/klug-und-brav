@@ -14,35 +14,40 @@ const ROOMS = {
     className: 'living-room',
     furniture: [
       { id: 'sofa', label: '沙发', x: 10, y: 58, w: 23, h: 18, note: '小人安静地坐了一会儿。' },
-      { id: 'toybox', label: '玩具箱', x: 70, y: 64, w: 18, h: 16, action: 'play' },
+      { id: 'toybox', label: '玩具箱', x: 70, y: 64, w: 18, h: 16, action: 'play', petX: 66, petY: 57 },
       { id: 'plant', label: '绿植', x: 88, y: 37, w: 8, h: 31, note: '窗边的叶子轻轻晃了晃。' },
+      { id: 'rug', label: '地毯', x: 40, y: 72, w: 18, h: 9, note: '地毯让脚步声变轻了。' },
+      { id: 'door', label: '门', x: 58, y: 42, w: 7, h: 24, note: '门后以后可以通向更多地方。' },
     ],
   },
   kitchen: {
     label: '厨房',
     className: 'kitchen',
     furniture: [
-      { id: 'fridge', label: '冰箱', x: 8, y: 33, w: 14, h: 36, action: 'feed' },
-      { id: 'table', label: '餐桌', x: 42, y: 58, w: 26, h: 14, action: 'feed' },
+      { id: 'fridge', label: '冰箱', x: 8, y: 33, w: 14, h: 36, action: 'feed', petX: 27, petY: 54 },
+      { id: 'table', label: '餐桌', x: 42, y: 58, w: 26, h: 14, action: 'feed', petX: 52, petY: 51 },
       { id: 'stove', label: '灶台', x: 76, y: 49, w: 17, h: 20, note: '灶台旁留着一点温暖的香气。' },
+      { id: 'dish', label: '餐盘', x: 52, y: 52, w: 8, h: 6, action: 'feed', petX: 52, petY: 50 },
     ],
   },
   bedroom: {
     label: '卧室',
     className: 'bedroom',
     furniture: [
-      { id: 'bed', label: '床', x: 11, y: 53, w: 34, h: 22, action: 'sleep' },
+      { id: 'bed', label: '床', x: 11, y: 53, w: 34, h: 22, action: 'sleep', petX: 31, petY: 49 },
       { id: 'lamp', label: '小灯', x: 52, y: 42, w: 8, h: 28, note: '小灯把卧室照得软软的。' },
       { id: 'wardrobe', label: '衣柜', x: 78, y: 35, w: 15, h: 35, note: '衣柜里以后可以放小人的衣服。' },
+      { id: 'nightstand', label: '床头柜', x: 47, y: 58, w: 9, h: 12, note: '床头柜上放着一盏小小的灯影。' },
     ],
   },
   bathroom: {
     label: '卫生间',
     className: 'bathroom',
     furniture: [
-      { id: 'tub', label: '浴缸', x: 11, y: 57, w: 34, h: 18, action: 'bath' },
-      { id: 'sink', label: '洗手池', x: 56, y: 52, w: 15, h: 18, action: 'bath' },
+      { id: 'tub', label: '浴缸', x: 11, y: 57, w: 34, h: 18, action: 'bath', petX: 35, petY: 53 },
+      { id: 'sink', label: '洗手池', x: 56, y: 52, w: 15, h: 18, action: 'bath', petX: 52, petY: 51 },
       { id: 'mirror', label: '镜子', x: 58, y: 31, w: 11, h: 15, note: '镜子里映着安静的小屋。' },
+      { id: 'towel', label: '毛巾', x: 78, y: 36, w: 9, h: 18, note: '柔软的毛巾挂在墙边。' },
     ],
   },
 };
@@ -57,21 +62,25 @@ const WEATHER_LABELS = {
 const ACTIONS = {
   feed: {
     animation: 'is-eating',
+    duration: 1800,
     narration: '小人认真吃完了一小份饭。',
     deltas: { satiety: 28, cleanliness: -3, energy: 2, mood: 6, bond: 2 },
   },
   bath: {
     animation: 'is-bathing',
+    duration: 1900,
     narration: '水汽和泡泡让小人变得清爽了一点。',
     deltas: { satiety: -2, cleanliness: 34, energy: -4, mood: 5, bond: 2 },
   },
   sleep: {
     animation: 'is-sleeping',
+    duration: 2100,
     narration: '小人蜷起来，安安静静地睡着了。',
     deltas: { satiety: -7, cleanliness: -2, energy: 32, mood: 4, bond: 1 },
   },
   play: {
     animation: 'is-playing',
+    duration: 1700,
     narration: '小小的游戏让房间轻快了一点。',
     deltas: { satiety: -8, cleanliness: -4, energy: -12, mood: 26, bond: 3 },
   },
@@ -91,13 +100,28 @@ const DEFAULT_SAVE = {
         mood: 74,
         bond: 12,
       },
+      currentRoom: 'living',
+      currentAction: null,
+      actionState: 'idle',
       lastAction: null,
+      actionHistory: [],
+      personality: {
+        keywords: ['安静', '温和', '占位'],
+        expressionStyle: '用动作和状态表达，不直接说话',
+      },
+      likes: {
+        rooms: ['客厅'],
+        interactions: ['play'],
+      },
+      visualAnchor: '国家拟人小人占位；最终国家、配色和符号待确认',
     },
   ],
   activePetId: 'pet-countryhuman-placeholder',
   lastSavedAt: new Date().toISOString(),
+  lastVisitedAt: new Date().toISOString(),
   weatherByDate: {},
   storageWarning: false,
+  currentAction: null,
 };
 
 const state = loadSave();
@@ -117,6 +141,8 @@ const els = {
 
 applyOfflineDecay();
 render();
+markVisitedAndSave();
+window.setInterval(refreshWorldIfNeeded, 60000);
 
 els.resetSave.addEventListener('click', () => {
   if (!window.confirm('要重置这个浏览器里的本地存档吗？')) {
@@ -171,8 +197,15 @@ function sanitizeSave(candidate) {
       id,
       name: typeof pet?.name === 'string' && pet.name ? pet.name : fallbackPet.name,
       kind: typeof pet?.kind === 'string' && pet.kind ? pet.kind : fallbackPet.kind,
+      currentRoom: Object.hasOwn(ROOMS, pet?.currentRoom) ? pet.currentRoom : currentRoomForCandidate(candidate),
+      currentAction: isPlainObject(pet?.currentAction) ? pet.currentAction : null,
+      actionState: typeof pet?.actionState === 'string' ? pet.actionState : 'idle',
       stats: sanitizeStats(pet?.stats ?? fallbackPet.stats),
       lastAction: typeof pet?.lastAction === 'string' ? pet.lastAction : null,
+      actionHistory: sanitizeActionHistory(pet?.actionHistory),
+      personality: isPlainObject(pet?.personality) ? pet.personality : fallbackPet.personality,
+      likes: isPlainObject(pet?.likes) ? pet.likes : fallbackPet.likes,
+      visualAnchor: typeof pet?.visualAnchor === 'string' ? pet.visualAnchor : fallbackPet.visualAnchor,
     };
   });
 
@@ -182,6 +215,9 @@ function sanitizeSave(candidate) {
   const lastSavedAt = Number.isFinite(new Date(candidate.lastSavedAt).getTime())
     ? new Date(candidate.lastSavedAt).toISOString()
     : fallback.lastSavedAt;
+  const lastVisitedAt = Number.isFinite(new Date(candidate.lastVisitedAt).getTime())
+    ? new Date(candidate.lastVisitedAt).toISOString()
+    : lastSavedAt;
 
   return {
     ...fallback,
@@ -189,9 +225,38 @@ function sanitizeSave(candidate) {
     pets,
     activePetId,
     lastSavedAt,
+    lastVisitedAt,
     weatherByDate,
     storageWarning: false,
+    currentAction: null,
   };
+}
+
+function currentRoomForCandidate(candidate) {
+  return Object.hasOwn(ROOMS, candidate?.currentRoom) ? candidate.currentRoom : DEFAULT_SAVE.currentRoom;
+}
+
+function sanitizeActionHistory(history) {
+  if (!Array.isArray(history)) {
+    return [];
+  }
+
+  return history.slice(-10).map((entry) => {
+    if (typeof entry === 'string') {
+      return { action: entry, roomId: 'unknown', furnitureId: 'unknown', at: new Date().toISOString() };
+    }
+
+    if (!isPlainObject(entry)) {
+      return null;
+    }
+
+    return {
+      action: typeof entry.action === 'string' ? entry.action : 'unknown',
+      roomId: typeof entry.roomId === 'string' ? entry.roomId : 'unknown',
+      furnitureId: typeof entry.furnitureId === 'string' ? entry.furnitureId : 'unknown',
+      at: Number.isFinite(new Date(entry.at).getTime()) ? new Date(entry.at).toISOString() : new Date().toISOString(),
+    };
+  }).filter(Boolean);
 }
 
 function sanitizeStats(stats) {
@@ -235,13 +300,29 @@ function save() {
   safeWriteSave(JSON.stringify(state));
 }
 
+function markVisitedAndSave() {
+  state.lastVisitedAt = new Date().toISOString();
+  save();
+}
+
+function refreshWorldIfNeeded() {
+  const previousWorld = els.worldChip.textContent;
+  const world = getWorldState(new Date());
+  const nextWorld = `${world.period} · ${world.season} · ${world.weather}`;
+  if (previousWorld !== nextWorld) {
+    renderWorld(world);
+    save();
+  }
+}
+
 function render() {
   const world = getWorldState(new Date());
   renderWorld(world);
   renderStatusBars();
   renderRoomTabs();
   renderRoom();
-  save();
+  renderPetState();
+  renderActionState();
 }
 
 function renderWorld(world) {
@@ -279,6 +360,53 @@ function getStatusTone(key, value) {
   return '需要照顾';
 }
 
+function renderPetState() {
+  const stats = getActivePet().stats;
+  els.pet.dataset.hungry = stats.satiety < 35 ? 'true' : 'false';
+  els.pet.dataset.dirty = stats.cleanliness < 35 ? 'true' : 'false';
+  els.pet.dataset.tired = stats.energy < 35 ? 'true' : 'false';
+  els.pet.dataset.sad = stats.mood < 35 ? 'true' : 'false';
+  els.pet.dataset.moodState = derivePetMoodState(stats);
+}
+
+function derivePetMoodState(stats) {
+  const needs = [
+    ['hungry', 100 - stats.satiety],
+    ['dirty', 100 - stats.cleanliness],
+    ['tired', 100 - stats.energy],
+    ['sad', 100 - stats.mood],
+  ].sort((a, b) => b[1] - a[1]);
+
+  return needs[0][1] > 65 ? needs[0][0] : 'settled';
+}
+
+function renderActionState() {
+  els.roomScene.dataset.action = state.currentAction?.type ?? 'idle';
+  if (state.currentAction) {
+    els.interactionNote.textContent = '小人正在做自己的事……';
+    return;
+  }
+
+  const moodHints = {
+    hungry: '小人好像有点饿，厨房里的食物会有帮助。',
+    dirty: '小人身上有点灰，卫生间可以让它清爽些。',
+    tired: '小人看起来困了，卧室的床在等它。',
+    sad: '小人有点低落，客厅的玩具也许能让房间轻快些。',
+    settled: '点击房间里的家具来照顾小人。',
+  };
+  els.interactionNote.textContent = moodHints[els.pet.dataset.moodState] ?? moodHints.settled;
+}
+
+function movePetTo(item) {
+  els.pet.style.left = `${item.petX ?? item.x + item.w / 2}%`;
+  els.pet.style.top = `${item.petY ?? item.y}%`;
+}
+
+function resetPetPosition() {
+  els.pet.style.left = '';
+  els.pet.style.top = '';
+}
+
 function renderRoomTabs() {
   els.roomTabs.innerHTML = Object.entries(ROOMS).map(([roomId, room]) => `
     <button type="button" class="room-tab ${roomId === state.currentRoom ? 'is-active' : ''}" data-room="${roomId}" ${roomId === state.currentRoom ? 'aria-current="page"' : ''}>
@@ -289,8 +417,10 @@ function renderRoomTabs() {
   els.roomTabs.querySelectorAll('button').forEach((button) => {
     button.addEventListener('click', () => {
       state.currentRoom = button.dataset.room;
+      getActivePet().currentRoom = state.currentRoom;
       setNarration(`视线转到了${ROOMS[state.currentRoom].label}。`);
       render();
+      save();
     });
   });
 }
@@ -317,6 +447,11 @@ function renderRoom() {
 }
 
 function handleFurnitureClick(item) {
+  if (state.currentAction) {
+    setNarration('小人正在专心做一件事。');
+    return;
+  }
+
   if (!item.action) {
     setNarration(item.note ?? '房间里安静了一会儿。');
     return;
@@ -324,12 +459,43 @@ function handleFurnitureClick(item) {
 
   const action = ACTIONS[item.action];
   const activePet = getActivePet();
-  applyDeltas(activePet.stats, action.deltas);
-  playPetAnimation(action.animation);
-  setNarration(action.narration);
-  activePet.lastAction = item.action;
-  renderStatusBars();
-  save();
+  state.currentAction = { type: item.action, roomId: state.currentRoom, furnitureId: item.id, startedAt: new Date().toISOString(), durationMs: action.duration };
+  activePet.currentAction = state.currentAction;
+  activePet.actionState = 'active';
+  movePetTo(item);
+  playPetAnimation(action.animation, action.duration);
+  setNarration(getActionStartNarration(item.action));
+  renderActionState();
+
+  window.setTimeout(() => {
+    applyDeltas(activePet.stats, action.deltas);
+    setNarration(action.narration);
+    activePet.lastAction = item.action;
+    activePet.actionHistory = [...(activePet.actionHistory ?? []), {
+      action: item.action,
+      roomId: state.currentRoom,
+      furnitureId: item.id,
+      at: new Date().toISOString(),
+    }].slice(-10);
+    state.currentAction = null;
+    activePet.currentAction = null;
+    activePet.actionState = 'idle';
+    resetPetPosition();
+    renderStatusBars();
+    renderPetState();
+    renderActionState();
+    save();
+  }, action.duration);
+}
+
+function getActionStartNarration(actionType) {
+  const messages = {
+    feed: '小人走到食物旁边。',
+    bath: '小人靠近有水汽的地方。',
+    sleep: '小人慢慢挪到床边。',
+    play: '小人靠近玩具箱。',
+  };
+  return messages[actionType] ?? '小人靠近了家具。';
 }
 
 function applyDeltas(stats, deltas) {
@@ -338,12 +504,12 @@ function applyDeltas(stats, deltas) {
   });
 }
 
-function playPetAnimation(className) {
+function playPetAnimation(className, duration = 1400) {
   els.pet.classList.remove('is-eating', 'is-bathing', 'is-sleeping', 'is-playing');
   els.pet.classList.add(className);
   window.setTimeout(() => {
     els.pet.classList.remove(className);
-  }, 1400);
+  }, duration);
 }
 
 function setNarration(text) {
@@ -351,7 +517,7 @@ function setNarration(text) {
 }
 
 function applyOfflineDecay() {
-  const lastSaved = new Date(state.lastSavedAt).getTime();
+  const lastSaved = new Date(state.lastVisitedAt ?? state.lastSavedAt).getTime();
   if (!Number.isFinite(lastSaved)) {
     return;
   }
@@ -364,10 +530,10 @@ function applyOfflineDecay() {
   const cappedHours = Math.min(hoursAway, 72);
   const activePet = getActivePet();
   applyDeltas(activePet.stats, {
-    satiety: -0.9 * cappedHours,
-    cleanliness: -0.45 * cappedHours,
-    energy: getWorldState(new Date()).periodKey === 'night' ? 0.4 * cappedHours : -0.25 * cappedHours,
-    mood: -0.2 * cappedHours,
+    satiety: -0.55 * cappedHours,
+    cleanliness: -0.28 * cappedHours,
+    energy: getWorldState(new Date()).periodKey === 'night' ? 0.32 * cappedHours : -0.16 * cappedHours,
+    mood: -0.12 * cappedHours,
     bond: 0,
   });
 }

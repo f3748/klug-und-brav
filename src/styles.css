@@ -378,3 +378,92 @@ h1 {
     min-height: 360px;
   }
 }
+
+.prototype-note {
+  margin: 0 0 18px;
+  padding: 10px 14px;
+  border: 3px dashed var(--ink);
+  background: rgba(255, 248, 235, 0.82);
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.pet[data-hungry="true"] .pet-body {
+  box-shadow: inset 0 -10px 0 rgba(245, 189, 69, 0.42);
+}
+
+.pet[data-dirty="true"] .pet-head::after {
+  content: "";
+  position: absolute;
+  left: 9px;
+  top: 10px;
+  width: 8px;
+  height: 8px;
+  background: rgba(96, 74, 62, 0.55);
+  box-shadow: 32px 7px 0 rgba(96, 74, 62, 0.45), 19px 27px 0 rgba(96, 74, 62, 0.38);
+}
+
+.pet[data-tired="true"] .pet-eye {
+  height: 3px;
+  top: 31px;
+}
+
+.pet[data-sad="true"] {
+  transform: translate(-50%, -48%);
+}
+
+.furniture-rug { background: #c88966; }
+.furniture-door { background: #8b5b42; }
+.furniture-dish { background: #fff1d6; }
+.furniture-nightstand { background: #8f623f; }
+.furniture-towel { background: #f3d7a7; }
+
+.room-scene[data-action="feed"] .interaction-note,
+.room-scene[data-action="bath"] .interaction-note,
+.room-scene[data-action="sleep"] .interaction-note,
+.room-scene[data-action="play"] .interaction-note {
+  background: #fff3ba;
+}
+
+.room-scene[data-action="feed"]::after,
+.room-scene[data-action="bath"]::after,
+.room-scene[data-action="sleep"]::after,
+.room-scene[data-action="play"]::after {
+  position: absolute;
+  left: calc(var(--effect-x, 50%) - 34px);
+  top: 33%;
+  z-index: 4;
+  padding: 6px 10px;
+  border: 3px solid var(--ink);
+  background: rgba(255, 248, 235, 0.96);
+  font-weight: 900;
+}
+
+.room-scene[data-action="feed"]::after { content: "饭"; }
+.room-scene[data-action="bath"]::after { content: "泡泡"; }
+.room-scene[data-action="sleep"]::after { content: "Zzz"; }
+.room-scene[data-action="play"]::after { content: "星星"; }
+
+.pet {
+  transition: left 420ms steps(5), top 420ms steps(5), transform 180ms ease;
+}
+
+.pet[data-mood-state="hungry"] {
+  animation: slow-bob 900ms steps(2) infinite;
+}
+
+.pet[data-mood-state="dirty"] .pet-body {
+  filter: saturate(0.75);
+}
+
+.pet[data-mood-state="tired"] {
+  transform: translate(-50%, -46%);
+}
+
+.pet[data-mood-state="sad"] .pet-head {
+  background: #efd1b0;
+}
+
+@keyframes slow-bob {
+  50% { transform: translate(-50%, -49%); }
+}
