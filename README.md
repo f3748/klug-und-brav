@@ -5,3 +5,11 @@ A virtual pet website about countryhuman.
 ## Planning
 
 - [Pixel person virtual pet project plan v0.1](docs/project-plan-v0.1.md)
+
+## Running the prototype
+
+Open `index.html` directly in a browser, or serve the repository with a local static server such as `python3 -m http.server 4173`. The prototype stores its save data in the current browser.
+
+## Checks
+
+Run `node --check src/main.js && node scripts/check-prototype.mjs` to validate the static prototype.
