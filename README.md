@@ -1,6 +1,6 @@
 # klug-und-brav
 
-A virtual pet website with frame-by-frame character animations. It's about countryhuman.
+A browser-first pixel virtual pet website about quiet, room-based life with a small character.
 
 ## Planning
 
