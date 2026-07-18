@@ -5,9 +5,9 @@ const html = readFileSync('index.html', 'utf8');
 const js = readFileSync('src/main.js', 'utf8');
 const css = readFileSync('src/styles.css', 'utf8');
 
-const requiredHtml = ['id="status-bars"', 'id="room-tabs"', 'id="room-scene"', 'id="narration"', 'prototype-note'];
-const requiredJs = ['localStorage', 'sanitizeSave', 'safeReadSave', 'safeWriteSave', 'getLocalDateKey', 'pets', 'actionHistory', 'personality', 'visualAnchor', 'renderPetState', 'renderActionState', 'movePetTo', 'derivePetMoodState', 'currentAction', 'lastVisitedAt', 'aria-valuenow'];
-const requiredCss = ['.status-card', '.room-scene', '.furniture', '.pet', 'data-weather', '.prototype-note', 'data-hungry', 'data-action', 'data-mood-state'];
+const requiredHtml = ['id="status-bars"', 'id="mini-map"', 'id="room-scene"', 'id="narration"', 'prototype-note'];
+const requiredJs = ['localStorage', 'sanitizeSave', 'safeReadSave', 'safeWriteSave', 'getLocalDateKey', 'pets', 'actionHistory', 'personality', 'visualAnchor', 'renderPetState', 'renderActionState', 'movePetTo', 'derivePetMoodState', 'currentAction', 'lastVisitedAt', 'renderMiniMap', 'switchRoom', 'aria-valuenow'];
+const requiredCss = ['.status-card', '.room-scene', '.furniture', '.pet', 'data-weather', '.prototype-note', 'data-hungry', 'data-action', 'data-mood-state', '.mini-map', '.map-room'];
 
 for (const [name, text, needles] of [
   ['index.html', html, requiredHtml],
@@ -53,14 +53,14 @@ function runWithStorage(initialValue, label, options = {}) {
   new Script(js, { filename: 'src/main.js' }).runInContext(context);
 
   assert(document.byId['world-chip'].textContent !== '正在整理小屋...', `${label}: world not rendered`);
-  assert(document.queries['.room-tab']?.length === 4, `${label}: room tabs missing`);
+  assert(document.queries['.map-room']?.length === 4, `${label}: mini map rooms missing`);
   assert(document.queries['.status-row']?.length === 5, `${label}: status rows missing`);
   assert(document.queries['.furniture']?.length >= 3, `${label}: furniture missing`);
 }
 
 function createDocument() {
   const queries = {};
-  const byId = Object.fromEntries(['status-bars', 'room-tabs', 'room-scene', 'room-title', 'pet', 'narration', 'world-chip', 'window-view', 'weather-layer', 'interaction-note', 'reset-save'].map((id) => [id, createElement(id, queries)]));
+  const byId = Object.fromEntries(['status-bars', 'mini-map', 'room-scene', 'room-title', 'pet', 'narration', 'world-chip', 'window-view', 'weather-layer', 'interaction-note', 'reset-save'].map((id) => [id, createElement(id, queries)]));
 
   return {
     byId,
@@ -114,8 +114,8 @@ function createElement(id = '', queries = {}) {
 }
 
 function registerGeneratedNodes(htmlText, queries) {
-  if (htmlText.includes('room-tab')) {
-    queries['.room-tab'] = Array.from({ length: count(htmlText, 'class="room-tab') }, (_, index) => ({ dataset: { room: ['living', 'kitchen', 'bedroom', 'bathroom'][index] }, addEventListener() {} }));
+  if (htmlText.includes('map-room')) {
+    queries['.map-room'] = Array.from({ length: count(htmlText, 'class="map-room') }, (_, index) => ({ dataset: { room: ['living', 'kitchen', 'bedroom', 'bathroom'][index] }, addEventListener() {} }));
   }
   if (htmlText.includes('status-row')) {
     queries['.status-row'] = Array.from({ length: count(htmlText, 'status-row') }, () => ({}));

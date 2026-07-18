@@ -13,11 +13,11 @@ const ROOMS = {
     label: '客厅',
     className: 'living-room',
     furniture: [
-      { id: 'sofa', label: '沙发', x: 10, y: 58, w: 23, h: 18, note: '小人安静地坐了一会儿。' },
+      { id: 'sofa', label: '沙发', x: 10, y: 58, w: 23, h: 18, note: '{name}安静地坐了一会儿。' },
       { id: 'toybox', label: '玩具箱', x: 70, y: 64, w: 18, h: 16, action: 'play', petX: 66, petY: 57 },
       { id: 'plant', label: '绿植', x: 88, y: 37, w: 8, h: 31, note: '窗边的叶子轻轻晃了晃。' },
       { id: 'rug', label: '地毯', x: 40, y: 72, w: 18, h: 9, note: '地毯让脚步声变轻了。' },
-      { id: 'door', label: '门', x: 58, y: 42, w: 7, h: 24, note: '门后以后可以通向更多地方。' },
+      { id: 'door', label: '门', x: 58, y: 42, w: 7, h: 24, travel: true, note: '门后通向小屋里的其他房间。' },
     ],
   },
   kitchen: {
@@ -36,7 +36,7 @@ const ROOMS = {
     furniture: [
       { id: 'bed', label: '床', x: 11, y: 53, w: 34, h: 22, action: 'sleep', petX: 31, petY: 49 },
       { id: 'lamp', label: '小灯', x: 52, y: 42, w: 8, h: 28, note: '小灯把卧室照得软软的。' },
-      { id: 'wardrobe', label: '衣柜', x: 78, y: 35, w: 15, h: 35, note: '衣柜里以后可以放小人的衣服。' },
+      { id: 'wardrobe', label: '衣柜', x: 78, y: 35, w: 15, h: 35, note: '衣柜里以后可以放角色的衣服。' },
       { id: 'nightstand', label: '床头柜', x: 47, y: 58, w: 9, h: 12, note: '床头柜上放着一盏小小的灯影。' },
     ],
   },
@@ -63,19 +63,19 @@ const ACTIONS = {
   feed: {
     animation: 'is-eating',
     duration: 1800,
-    narration: '小人认真吃完了一小份饭。',
+    narration: '{name}认真吃完了一小份饭。',
     deltas: { satiety: 28, cleanliness: -3, energy: 2, mood: 6, bond: 2 },
   },
   bath: {
     animation: 'is-bathing',
     duration: 1900,
-    narration: '水汽和泡泡让小人变得清爽了一点。',
+    narration: '水汽和泡泡让{name}变得清爽了一点。',
     deltas: { satiety: -2, cleanliness: 34, energy: -4, mood: 5, bond: 2 },
   },
   sleep: {
     animation: 'is-sleeping',
     duration: 2100,
-    narration: '小人蜷起来，安安静静地睡着了。',
+    narration: '{name}蜷起来，安安静静地睡着了。',
     deltas: { satiety: -7, cleanliness: -2, energy: 32, mood: 4, bond: 1 },
   },
   play: {
@@ -113,7 +113,7 @@ const DEFAULT_SAVE = {
         rooms: ['客厅'],
         interactions: ['play'],
       },
-      visualAnchor: '国家拟人小人占位；最终国家、配色和符号待确认',
+      visualAnchor: '国家拟人角色占位；最终国家、配色和符号待确认',
     },
   ],
   activePetId: 'pet-countryhuman-placeholder',
@@ -127,7 +127,7 @@ const DEFAULT_SAVE = {
 const state = loadSave();
 const els = {
   statusBars: document.querySelector('#status-bars'),
-  roomTabs: document.querySelector('#room-tabs'),
+  miniMap: document.querySelector('#mini-map'),
   roomScene: document.querySelector('#room-scene'),
   roomTitle: document.querySelector('#room-title'),
   pet: document.querySelector('#pet'),
@@ -163,6 +163,15 @@ function createDefaultSave() {
 function getActivePet() {
   const pet = state.pets.find((item) => item.id === state.activePetId);
   return pet ?? state.pets[0];
+}
+
+
+function getPetDisplayName() {
+  return getActivePet().name || '角色';
+}
+
+function toPetText(text) {
+  return text.replaceAll('{name}', getPetDisplayName());
 }
 
 function loadSave() {
@@ -319,7 +328,7 @@ function render() {
   const world = getWorldState(new Date());
   renderWorld(world);
   renderStatusBars();
-  renderRoomTabs();
+  renderMiniMap();
   renderRoom();
   renderPetState();
   renderActionState();
@@ -381,18 +390,19 @@ function derivePetMoodState(stats) {
 }
 
 function renderActionState() {
+  const name = getPetDisplayName();
   els.roomScene.dataset.action = state.currentAction?.type ?? 'idle';
   if (state.currentAction) {
-    els.interactionNote.textContent = '小人正在做自己的事……';
+    els.interactionNote.textContent = `${name}正在做自己的事……`;
     return;
   }
 
   const moodHints = {
-    hungry: '小人好像有点饿，厨房里的食物会有帮助。',
-    dirty: '小人身上有点灰，卫生间可以让它清爽些。',
-    tired: '小人看起来困了，卧室的床在等它。',
-    sad: '小人有点低落，客厅的玩具也许能让房间轻快些。',
-    settled: '点击房间里的家具来照顾小人。',
+    hungry: `${name}好像有点饿，厨房里的食物会有帮助。`,
+    dirty: `${name}身上有点灰，卫生间可以让它清爽些。`,
+    tired: `${name}看起来困了，卧室的床在等着。`,
+    sad: `${name}有点低落，客厅的玩具也许能让房间轻快些。`,
+    settled: `点击房间里的家具来照顾${name}。`,
   };
   els.interactionNote.textContent = moodHints[els.pet.dataset.moodState] ?? moodHints.settled;
 }
@@ -407,22 +417,40 @@ function resetPetPosition() {
   els.pet.style.top = '';
 }
 
-function renderRoomTabs() {
-  els.roomTabs.innerHTML = Object.entries(ROOMS).map(([roomId, room]) => `
-    <button type="button" class="room-tab ${roomId === state.currentRoom ? 'is-active' : ''}" data-room="${roomId}" ${roomId === state.currentRoom ? 'aria-current="page"' : ''}>
-      ${room.label}
-    </button>
-  `).join('');
+function renderMiniMap() {
+  els.miniMap.innerHTML = `
+    <strong class="mini-map-title">小地图</strong>
+    <div class="mini-map-grid">
+      ${Object.entries(ROOMS).map(([roomId, room]) => `
+        <button type="button" class="map-room ${roomId === state.currentRoom ? 'is-active' : ''}" data-room="${roomId}" ${roomId === state.currentRoom ? 'aria-current="page"' : ''}>
+          ${room.label}
+        </button>
+      `).join('')}
+    </div>
+  `;
 
-  els.roomTabs.querySelectorAll('button').forEach((button) => {
-    button.addEventListener('click', () => {
-      state.currentRoom = button.dataset.room;
-      getActivePet().currentRoom = state.currentRoom;
-      setNarration(`视线转到了${ROOMS[state.currentRoom].label}。`);
-      render();
-      save();
-    });
+  els.miniMap.querySelectorAll('button').forEach((button) => {
+    button.addEventListener('click', () => switchRoom(button.dataset.room));
   });
+}
+
+function switchRoom(roomId) {
+  if (!Object.hasOwn(ROOMS, roomId) || state.currentRoom === roomId) {
+    return;
+  }
+
+  state.currentRoom = roomId;
+  getActivePet().currentRoom = state.currentRoom;
+  resetPetPosition();
+  setNarration(`视线转到了${ROOMS[state.currentRoom].label}。`);
+  render();
+  save();
+}
+
+function getNextRoomId() {
+  const roomIds = Object.keys(ROOMS);
+  const currentIndex = roomIds.indexOf(state.currentRoom);
+  return roomIds[(currentIndex + 1) % roomIds.length];
 }
 
 function renderRoom() {
@@ -448,12 +476,17 @@ function renderRoom() {
 
 function handleFurnitureClick(item) {
   if (state.currentAction) {
-    setNarration('小人正在专心做一件事。');
+    setNarration(`${getPetDisplayName()}正在专心做一件事。`);
+    return;
+  }
+
+  if (item.travel) {
+    switchRoom(getNextRoomId());
     return;
   }
 
   if (!item.action) {
-    setNarration(item.note ?? '房间里安静了一会儿。');
+    setNarration(toPetText(item.note ?? '房间里安静了一会儿。'));
     return;
   }
 
@@ -469,7 +502,7 @@ function handleFurnitureClick(item) {
 
   window.setTimeout(() => {
     applyDeltas(activePet.stats, action.deltas);
-    setNarration(action.narration);
+    setNarration(toPetText(action.narration));
     activePet.lastAction = item.action;
     activePet.actionHistory = [...(activePet.actionHistory ?? []), {
       action: item.action,
@@ -490,12 +523,12 @@ function handleFurnitureClick(item) {
 
 function getActionStartNarration(actionType) {
   const messages = {
-    feed: '小人走到食物旁边。',
-    bath: '小人靠近有水汽的地方。',
-    sleep: '小人慢慢挪到床边。',
-    play: '小人靠近玩具箱。',
+    feed: '{name}走到食物旁边。',
+    bath: '{name}靠近有水汽的地方。',
+    sleep: '{name}慢慢挪到床边。',
+    play: '{name}靠近玩具箱。',
   };
-  return messages[actionType] ?? '小人靠近了家具。';
+  return toPetText(messages[actionType] ?? '{name}靠近了家具。');
 }
 
 function applyDeltas(stats, deltas) {
