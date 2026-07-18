@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Klug und Brav · Countryhuman 小屋</title>
+    <link rel="stylesheet" href="src/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell" aria-label="Countryhuman 电子小宠物原型">
+      <section class="top-panel" aria-label="小人状态">
+        <div>
+          <p class="eyebrow">Klug und Brav</p>
+          <h1>Countryhuman 小屋</h1>
+        </div>
+        <div class="world-chip" id="world-chip">正在整理小屋...</div>
+      </section>
+
+
+      <section class="prototype-note" aria-label="原型说明">
+        当前是功能原型：小人、家具和房间都是占位表现，不代表最终美术。
+      </section>
+
+      <section class="status-card" aria-label="状态条" id="status-bars"></section>
+
+      <section class="game-card" aria-label="房间场景">
+        <nav class="room-tabs" aria-label="房间" id="room-tabs"></nav>
+        <section class="room-scene" id="room-scene" aria-live="polite">
+          <div class="window-view" id="window-view" aria-hidden="true"></div>
+          <div class="weather-layer" id="weather-layer" aria-hidden="true"></div>
+          <div class="room-title" id="room-title"></div>
+          <div class="pet" id="pet" aria-label="国家拟人小人" role="img">
+            <div class="pet-head">
+              <span class="pet-eye left"></span>
+              <span class="pet-eye right"></span>
+            </div>
+            <div class="pet-body"></div>
+          </div>
+          <div class="interaction-note" id="interaction-note">点击房间里的家具来照顾小人。</div>
+        </section>
+      </section>
+
+      <section class="log-card" aria-label="安静旁白">
+        <p id="narration">小屋里很安静。</p>
+        <button class="reset-button" id="reset-save" type="button">重置本地存档</button>
+      </section>
+    </main>
+
+    <script defer src="src/main.js"></script>
+  </body>
+</html>
